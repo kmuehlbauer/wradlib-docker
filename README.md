@@ -1,33 +1,31 @@
-# wradlib using docker
+# wradlib/wradlib-docker:min_py27
 
 ## What
 
-- centos:7 based docker image
-- miniconda3 python3.6 with dedicated wradlib environment
-- wradlib dependencies
-- notebook dependencies
-- x11 stack
-- su-exec
+- wradlib/wradlib-docker:base based docker image
+    - x11 stack
+    - su-exec
+    - miniconda3 python3.6
+- dedicated `wradlib` environment with python2.7
+- wradlib run dependencies
 
 ## Build
 
 ```shell
-docker build -t wradlib .
+docker build -t min_py27 .
 ```
 
 ## Use
 
 ```shell
-$ docker run -i -t -p 8888:8888 -v /host/path/to/notebooks:/home/notebooks -v /host/path/to/wradlib-data:/home/wradlib-data -e WRADLIB_DATA=/home/wradlib-data wradlib:latest /opt/conda/envs/wradlib/bin/jupyter notebook --notebook-dir=/home/notebooks --ip='*' --port=8888 --no-browser
+$ docker run -it --rm -v /host/path/to/wradlib-data:/home/wradlib-data -e LOCAL_USER_ID=$UID -e WRADLIB_DATA=/home/wradlib-data wradlib/wradlib-docker:min_py27 /bin/bash
 ```
 
 This command starts a docker container with the following presets:
 
-- open port 8888 for notebook server connections
-- mounts the host `/host/path/to/notebooks` to the `/home/notebooks` folder inside the container
+- sets the container LOCAL_USER to your current $UID which grants you write access to the mounted folders
 - mounts the host `/host/path/to/wradlib-data` to the `/home/wradlib-data` folder inside the container
 - set the `WRADLIB_DATA` environment variable pointing to the specified folder
-- start the notebook server
+- start a bash-shell
+- removes the container after closing
 
-
-The full HTTP address including authentification token will be prompted in the notebook server log on the screen. Just connect with your local browser and you are done.
